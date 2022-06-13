@@ -1,15 +1,17 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const path = require('path');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
+const users = require('./routes/users');
 
 const { PORT = 3000 } = process.env;
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/mestodb')
-  .catch((err) => {
-    console.log(err);
-  });
+mongoose.connect('mongodb://localhost:27017/mestodb');
+
+app.use('/users', users);
+// app.use('/users', users);
+// app.use('/users', users);
 
 app.listen(PORT, () => {
   console.log('Hura!');

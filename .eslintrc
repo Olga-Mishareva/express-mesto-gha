@@ -3,7 +3,7 @@
 
   "rules": {
     "no-underscore-dangle": "off",
-    "no-console": "off"                   // потом удалить
+    "no-console": "off",    // потом удалить
   }
 }
 
