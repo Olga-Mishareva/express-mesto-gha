@@ -60,7 +60,6 @@ module.exports.likeCard = (req, res) => {
         res.status(NOT_FOUND).send({ message: 'Передан несуществующий _id карточки.' });
         return;
       }
-      console.log(err.name);
       res.status(CAST_ERR).send({ message: 'Ошибка по умолчанию.' });
     });
 };
@@ -81,7 +80,6 @@ module.exports.dislikeCard = (req, res) => {
         res.status(NOT_FOUND).send({ message: 'Передан несуществующий _id карточки.' });
         return;
       }
-      console.log(err.name);
       res.status(CAST_ERR).send({ message: 'Ошибка по умолчанию.' });
     });
 };

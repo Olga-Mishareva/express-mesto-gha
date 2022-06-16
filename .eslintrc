@@ -2,8 +2,8 @@
   "extends": "airbnb-base",
 
   "rules": {
-    "no-underscore-dangle": "off",
-    "no-console": "off",    // потом удалить
+    "no-underscore-dangle": "off"
+    // "no-console": "off"
   }
 }
 

@@ -59,7 +59,6 @@ module.exports.updateUserInfo = (req, res) => {
         res.status(NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден.' });
         return;
       }
-      console.log(err.name);
       res.status(CAST_ERR).send({ message: 'Ошибка по умолчанию.' });
     });
 };

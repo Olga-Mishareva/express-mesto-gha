@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-// const path = require('path');
 const bodyParser = require('body-parser');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
@@ -24,6 +23,4 @@ app.use((req, res, next) => {
 app.use('/users', users);
 app.use('/cards', cards);
 
-app.listen(PORT, () => {
-  console.log('Hura!');
-});
+app.listen(PORT);
