@@ -3,8 +3,19 @@
 [![Tests for sprint 14](https://github.com/${Olga-Mishareva}/${express-mesto-gha}/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/${Olga-Mishareva}/${express-mesto-gha}/actions/workflows/tests-14-sprint.yml)
 
 # Проект Mesto фронтенд + бэкенд
+##### Курсовая работа №13 для Яндекс.Практикум
+-----
 
+В этой курсовой начата работа над бэкендом для проекта место.
 
+### Использованные технологии
+
+* JS
+* NodeJS
+* Express
+* MongoDB
+
+---------------------
 
 ## Настройка бейджей статуса тестов
 Перед началом работы над проектом рекомендуется исправить бейджи, отражающие статус прохождения тестов.
@@ -29,3 +40,4 @@
 
 `npm run start` — запускает сервер   
 `npm run dev` — запускает сервер с hot-reload
+
