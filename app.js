@@ -7,6 +7,8 @@ const cards = require('./routes/cards');
 const { PORT = 3000 } = process.env;
 const app = express();
 
+const NOT_FOUND = 404;
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -24,7 +26,7 @@ app.use('/users', users);
 app.use('/cards', cards);
 
 app.use((req, res) => {
-  res.status(404).send({ message: 'Путь не найден' });
+  res.status(NOT_FOUND).send({ message: 'Путь не найден' });
 });
 
 app.listen(PORT);

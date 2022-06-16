@@ -51,7 +51,6 @@ module.exports.updateUserInfo = (req, res) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
-    // upsert: true, - если не найден, будет создан новый пользователь
     .orFail(() => new Error('Not Found'))
     .then((newUser) => res.send(newUser))
     .catch((err) => {
