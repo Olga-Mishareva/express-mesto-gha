@@ -36,6 +36,10 @@ module.exports.removeCard = (req, res) => {
     .orFail(() => new Error('Not Found'))
     .then((card) => res.send(card))
     .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        res.status(BAD_REQ).send({ message: 'Переданы некорректные данные для постановки лайка.' });
+        return;
+      }
       if (err.message === 'Not Found') {
         res.status(NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена.' });
         return;
@@ -50,8 +54,10 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: { _id: req.user._id } } },
     { new: true },
   )
+    .orFail(() => new Error('Not Found'))
     .then((like) => res.send(like))
     .catch((err) => {
+      console.log(err.name);
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         res.status(BAD_REQ).send({ message: 'Переданы некорректные данные для постановки лайка.' });
         return;
@@ -70,6 +76,7 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: { _id: req.user._id } } },
     { new: true },
   )
+    .orFail(() => new Error('Not Found'))
     .then((dislike) => res.send(dislike))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {

@@ -21,6 +21,10 @@ module.exports.getUser = (req, res) => {
     .orFail(() => new Error('Not Found'))
     .then((user) => res.send(user))
     .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        res.status(BAD_REQ).send({ message: 'Переданы некорректные данные при запросе пользователя.' });
+        return;
+      }
       if (err.message === 'Not Found') {
         res.status(NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден.' });
         return;
