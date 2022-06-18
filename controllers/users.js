@@ -1,18 +1,16 @@
 const User = require('../models/user');
-
-const BAD_REQ = 400;
-const NOT_FOUND = 404;
-const CAST_ERR = 500;
+const {
+  BAD_REQ,
+  NOT_FOUND,
+  SERVER_ERR,
+  CREATED,
+} = require('../constants/constants');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
-        res.status(BAD_REQ).send({ message: 'Переданы некорректные данные при создании пользователя.' });
-        return;
-      }
-      res.status(CAST_ERR).send({ message: 'Ошибка по умолчанию.' });
+    .catch(() => {
+      res.status(SERVER_ERR).send({ message: 'Ошибка по умолчанию.' });
     });
 };
 
@@ -21,7 +19,7 @@ module.exports.getUser = (req, res) => {
     .orFail(() => new Error('Not Found'))
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'CastError') {
         res.status(BAD_REQ).send({ message: 'Переданы некорректные данные при запросе пользователя.' });
         return;
       }
@@ -29,7 +27,7 @@ module.exports.getUser = (req, res) => {
         res.status(NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден.' });
         return;
       }
-      res.status(CAST_ERR).send({ message: 'Ошибка по умолчанию.' });
+      res.status(SERVER_ERR).send({ message: 'Ошибка по умолчанию.' });
     });
 };
 
@@ -37,13 +35,14 @@ module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .then((user) => res.send(user))
+    .then((user) => res.status(CREATED).send(user))
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      console.log(err.name);
+      if (err.name === 'ValidationError') {
         res.status(BAD_REQ).send({ message: 'Переданы некорректные данные при создании пользователя.' });
         return;
       }
-      res.status(CAST_ERR).send({ message: 'Ошибка по умолчанию.' });
+      res.status(SERVER_ERR).send({ message: 'Ошибка по умолчанию.' });
     });
 };
 
@@ -62,7 +61,7 @@ module.exports.updateUserInfo = (req, res) => {
         res.status(NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден.' });
         return;
       }
-      res.status(CAST_ERR).send({ message: 'Ошибка по умолчанию.' });
+      res.status(SERVER_ERR).send({ message: 'Ошибка по умолчанию.' });
     });
 };
 
@@ -81,6 +80,6 @@ module.exports.updateAvatar = (req, res) => {
         res.status(NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден.' });
         return;
       }
-      res.status(CAST_ERR).send({ message: 'Ошибка по умолчанию.' });
+      res.status(SERVER_ERR).send({ message: 'Ошибка по умолчанию.' });
     });
 };
