@@ -1,8 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const users = require('./routes/users');
-const cards = require('./routes/cards');
+const usersRoute = require('./routes/users');
+const cardsRoute = require('./routes/cards');
+
+mongoose.connect('mongodb://localhost:27017/mestodb');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -12,8 +14,6 @@ const NOT_FOUND = 404;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect('mongodb://localhost:27017/mestodb');
-
 // мидлвер для добавления owner id при создании карточек
 app.use((req, res, next) => {
   req.user = {
@@ -22,8 +22,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/users', users);
-app.use('/cards', cards);
+app.use('/users', usersRoute);
+app.use('/cards', cardsRoute);
 
 app.use((req, res) => {
   res.status(NOT_FOUND).send({ message: 'Путь не найден' });
