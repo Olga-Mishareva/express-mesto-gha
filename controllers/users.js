@@ -1,5 +1,6 @@
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const {
   BAD_REQ,
@@ -7,6 +8,56 @@ const {
   SERVER_ERR,
   CREATED,
 } = require('../constants/constants');
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  User.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        Promise.reject(new Error('Неправильные почта или пароль'));
+        return;
+      }
+      bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            Promise.reject(new Error('Неправильные почта или пароль'));
+            return;
+          }
+          const token = jwt.sign({ _id: user._id }, 'secret-key', { expiresIn: '7d' });
+          res.send({ token });
+        });
+    })
+    .catch((err) => res.status(401).send({ message: err.message }));
+};
+
+module.exports.createUser = (req, res) => {
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+
+  if (!validator.isEmail(email)) {
+    const err = new Error('не емайл'); // сейчас не работает, надо try ... catch
+    err.name = 'ValidationError';
+    throw err;
+  }
+
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
+    .then((user) => {
+      console.log(user);
+      res.status(CREATED).send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(BAD_REQ).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+        return;
+      }
+      res.status(SERVER_ERR).send({ message: 'Ошибка по умолчанию.' });
+    });
+};
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -27,33 +78,6 @@ module.exports.getUser = (req, res) => {
       }
       if (err.message === 'Not Found') {
         res.status(NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден.' });
-        return;
-      }
-      res.status(SERVER_ERR).send({ message: 'Ошибка по умолчанию.' });
-    });
-};
-
-module.exports.createUser = (req, res) => {
-  const {
-    name, about, avatar, email, password,
-  } = req.body;
-
-  if (!validator.isEmail(email)) {
-    const err = new Error('не емайл'); // сейчас не работает, надо try ... catch
-    err.name = 'ValidationError';
-    throw err;
-  }
-
-  User.create({
-    name, about, avatar, email, password,
-  })
-    .then((user) => {
-      console.log(user);
-      res.status(CREATED).send(user);
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(BAD_REQ).send({ message: 'Переданы некорректные данные при создании пользователя.' });
         return;
       }
       res.status(SERVER_ERR).send({ message: 'Ошибка по умолчанию.' });
