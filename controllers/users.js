@@ -1,3 +1,5 @@
+const validator = require('validator');
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const {
   BAD_REQ,
@@ -32,10 +34,23 @@ module.exports.getUser = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
 
-  User.create({ name, about, avatar })
-    .then((user) => res.status(CREATED).send(user))
+  if (!validator.isEmail(email)) {
+    const err = new Error('не емайл'); // сейчас не работает, надо try ... catch
+    err.name = 'ValidationError';
+    throw err;
+  }
+
+  User.create({
+    name, about, avatar, email, password,
+  })
+    .then((user) => {
+      console.log(user);
+      res.status(CREATED).send(user);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(BAD_REQ).send({ message: 'Переданы некорректные данные при создании пользователя.' });
