@@ -32,6 +32,7 @@ module.exports.login = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
+  // console.log('createUser');
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -61,6 +62,7 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.getUsers = (req, res) => {
+  // console.log('getUsers');
   User.find({})
     .then((users) => res.send(users))
     .catch(() => {
@@ -69,6 +71,8 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUser = (req, res) => {
+  // console.log('getUser');
+  // console.log(req.user._id);
   User.findById(req.params.userId)
     .orFail(() => new Error('Not Found'))
     .then((user) => res.send(user))
@@ -85,7 +89,14 @@ module.exports.getUser = (req, res) => {
     });
 };
 
+module.exports.getMe = (req, res) => {
+  User.findById(req.user._id)
+    .then((me) => res.send(me))
+    .catch(() => res.status(SERVER_ERR).send({ message: 'Ошибка по умолчанию.' }));
+};
+
 module.exports.updateUserInfo = (req, res) => {
+  // console.log('updateUserInfo');
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })

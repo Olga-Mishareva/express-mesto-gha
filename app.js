@@ -16,12 +16,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // мидлвер для добавления owner id при создании карточек
-app.use((req, res, next) => {
-  req.user = {
-    _id: '62a715d28ff2a35fe6bb6872',
-  };
-  next();
-});
+// app.use((req, res, next) => {
+//   req.user = {
+//     _id: '62a715d28ff2a35fe6bb6872',
+//   };
+//   next();
+// });
 
 app.post('/signin', login);
 app.post('/signup', createUser);

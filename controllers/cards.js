@@ -55,6 +55,7 @@ module.exports.likeCard = (req, res) => {
     .orFail(() => new Error('Not Found'))
     .then((card) => res.send(card))
     .catch((err) => {
+      console.log(err.name);
       if (err.name === 'CastError') {
         res.status(BAD_REQ).send({ message: 'Переданы некорректные данные для постановки лайка.' });
         return;
