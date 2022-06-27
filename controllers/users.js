@@ -47,10 +47,11 @@ module.exports.createUser = (req, res) => {
       name, about, avatar, email, password: hash,
     }))
     .then((user) => {
-      console.log(user);
+      // console.log(user);
       res.status(CREATED).send(user);
     })
     .catch((err) => {
+      console.log(err); // поймать ошибку об уникальности. Вынести код в конст?
       if (err.name === 'ValidationError') {
         res.status(BAD_REQ).send({ message: 'Переданы некорректные данные при создании пользователя.' });
         return;
