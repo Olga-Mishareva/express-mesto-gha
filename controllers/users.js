@@ -55,7 +55,13 @@ module.exports.createUser = (req, res) => {
     }))
     .then((user) => {
       // console.log(user);
-      res.status(CREATED).send(user);
+      res.status(CREATED).send({
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+        _id: user._id,
+      });
     })
     .catch((err) => {
       console.log(err); // поймать ошибку об уникальности. Вынести код в конст?
