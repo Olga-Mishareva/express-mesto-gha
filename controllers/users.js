@@ -25,7 +25,13 @@ module.exports.login = (req, res) => {
             return;
           }
           const token = jwt.sign({ _id: user._id }, 'secret-key', { expiresIn: '7d' });
-          res.send({ token });
+          // res.send({ token }); // запись в хедер
+          res.cookie('jwt', token, { // запись к куки
+            maxAge: 3600000 * 24 * 7,
+            httpOnly: true,
+            sameSite: true,
+          })
+            .end();
         });
     })
     .catch((err) => res.status(401).send({ message: err.message }));
