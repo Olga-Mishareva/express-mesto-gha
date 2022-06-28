@@ -30,12 +30,24 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.removeCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .orFail(() => new Error('Not Found'))
-    .then((card) => res.send(card))
+    .then((card) => {
+      if (card.owner.toString() !== req.user._id) {
+        Promise.reject(new Error('Forbidden'));
+        return;
+      }
+      Card.findByIdAndRemove(req.params.cardId)
+        .then((removedCard) => res.send(removedCard))
+        .catch(() => res.status(SERVER_ERR).send({ message: 'Ошибка по умолчанию.' }));
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BAD_REQ).send({ message: 'Переданы некорректные данные при удалении карточки.' });
+        return;
+      }
+      if (err.message === 'Forbidden') {
+        res.status(403).send({ message: 'Нет прав для удаления этой карточки.' });
         return;
       }
       if (err.message === 'Not Found') {
