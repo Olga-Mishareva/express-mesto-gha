@@ -4,7 +4,7 @@ const {
   NOT_FOUND,
   SERVER_ERR,
   CREATED,
-} = require('../constants/constants');
+} = require('../utils/constants');
 
 module.exports.getCards = (req, res) => {
   Card.find({})

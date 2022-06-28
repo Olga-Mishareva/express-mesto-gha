@@ -2,17 +2,19 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+
+const { JWT_CODE } = process.env;
 const {
   BAD_REQ,
   NOT_FOUND,
   SERVER_ERR,
   CREATED,
-} = require('../constants/constants');
+} = require('../utils/constants');
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
-
-  User.findOne({ email }).select('+password')
+  console.log(process.env);
+  User.findOne({ email })
     .then((user) => {
       if (!user) {
         Promise.reject(new Error('Неправильные почта или пароль'));
@@ -24,7 +26,7 @@ module.exports.login = (req, res) => {
             Promise.reject(new Error('Неправильные почта или пароль'));
             return;
           }
-          const token = jwt.sign({ _id: user._id }, 'secret-key', { expiresIn: '7d' });
+          const token = jwt.sign({ _id: user._id }, JWT_CODE, { expiresIn: '7d' });
           // res.send({ token }); // запись в хедер
           res.cookie('jwt', token, { // запись к куки
             maxAge: 3600000 * 24 * 7,

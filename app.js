@@ -1,8 +1,10 @@
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser'); // for cookie
-const { NOT_FOUND } = require('./constants/constants');
+const { NOT_FOUND } = require('./utils/constants');
 const usersRoute = require('./routes/users');
 const cardsRoute = require('./routes/cards');
 const { createUser, login } = require('./controllers/users');
