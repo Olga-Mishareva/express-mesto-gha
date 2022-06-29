@@ -57,14 +57,13 @@ module.exports.createUser = (req, res, next) => {
     }))
     .then((user) => {
       // console.log(user);
-      // res.status(CREATED).send({
-      //   name: user.name,
-      //   about: user.about,
-      //   avatar: user.avatar,
-      //   email: user.email,
-      //   _id: user._id,
-      // });
-      res.status(CREATED).send(user);
+      res.status(CREATED).send({
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+        _id: user._id,
+      });
     })
     .catch((err) => {
       // console.log(err);
@@ -101,6 +100,7 @@ module.exports.getUser = (req, res, next) => {
 
 module.exports.getMe = (req, res, next) => {
   User.findById(req.user._id)
+    .orFail(() => new NotFoundError('Пользователь с указанным _id не найден.'))
     .then((me) => res.send(me))
     .catch(next);
 };
