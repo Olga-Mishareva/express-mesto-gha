@@ -12,7 +12,7 @@ const NotFoundError = require('../errors/NotFoundError');
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
-  User.findOne({ email }) // add password
+  User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
         throw new UnauthorizedError('Неправильные почта или пароль');
@@ -57,13 +57,14 @@ module.exports.createUser = (req, res, next) => {
     }))
     .then((user) => {
       // console.log(user);
-      res.status(CREATED).send({
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-        email: user.email,
-        _id: user._id,
-      });
+      // res.status(CREATED).send({
+      //   name: user.name,
+      //   about: user.about,
+      //   avatar: user.avatar,
+      //   email: user.email,
+      //   _id: user._id,
+      // });
+      res.status(CREATED).send(user);
     })
     .catch((err) => {
       // console.log(err);
