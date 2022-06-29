@@ -2,14 +2,12 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const { CONFLICT_ERR_CODE, CREATED } = require('../utils/constants');
+
 const UnauthorizedError = require('../errors/UnauthorizedError');
 const BadRequestError = require('../errors/BadRequestError');
 const ConflictError = require('../errors/ConflictError');
 const NotFoundError = require('../errors/NotFoundError');
-const ForbiddenError = require('../errors/ForbiddenError');
-const { CONFLICT_ERR_CODE, CREATED } = require('../utils/constants');
-
-// const { JWT_CODE } = process.env;
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
@@ -24,7 +22,11 @@ module.exports.login = (req, res, next) => {
           if (!matched) {
             throw new UnauthorizedError('Неправильные почта или пароль');
           }
-          const token = jwt.sign({ _id: user._id }, 'some-key', { expiresIn: '7d' }); // { expiresIn: '7d' } - срок годности для хедер
+          const token = jwt.sign(
+            { _id: user._id },
+            'ca18bc04497261456f689f0693cbc10609a66e49e88ebe23f9e2b48483616894',
+            // { expiresIn: '7d' }, // - срок годности для хедер
+          );
           // res.send({ token }); // запись в хедер
           res.cookie('jwt', token, { // запись к куки
             maxAge: 3600000 * 24 * 7,
@@ -66,7 +68,7 @@ module.exports.createUser = (req, res, next) => {
     .catch((err) => {
       // console.log(err);
       if (err.code === CONFLICT_ERR_CODE) {
-        next(new ConflictError('Такой емайл уже существует'));
+        next(new ConflictError('Такой email уже существует'));
         return;
       }
       if (err.name === 'ValidationError') {
