@@ -30,4 +30,12 @@ app.use((req, res) => {
   res.status(NOT_FOUND).send({ message: 'Путь не найден' });
 });
 
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+
+  res.status(statusCode)
+    .send({ message: statusCode === 500 ? 'Ошибка сервера' : message });
+});
+
 app.listen(PORT);
