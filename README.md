@@ -3,10 +3,10 @@
 [![Tests for sprint 14](https://github.com/${Olga-Mishareva}/${express-mesto-gha}/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/${Olga-Mishareva}/${express-mesto-gha}/actions/workflows/tests-14-sprint.yml)
 
 # Проект Mesto фронтенд + бэкенд
-##### Курсовая работа №13 для Яндекс.Практикум
+##### Курсовая работа №14
 -----
 
-В этой курсовой начата работа над бэкендом для проекта место.
+В этой курсовой продолжена работа над бэкендом для проекта место.
 
 ### Использованные технологии
 
