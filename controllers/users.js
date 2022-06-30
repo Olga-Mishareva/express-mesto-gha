@@ -24,10 +24,8 @@ module.exports.login = (req, res, next) => {
           const token = jwt.sign(
             { _id: user._id },
             'ca18bc04497261456f689f0693cbc10609a66e49e88ebe23f9e2b48483616894',
-            // { expiresIn: '7d' }, // - срок годности для хедер
           );
-          // res.send({ token }); // запись в хедер
-          res.cookie('jwt', token, { // запись к куки
+          res.cookie('jwt', token, {
             maxAge: 3600000 * 24 * 7,
             httpOnly: true,
             sameSite: true,
