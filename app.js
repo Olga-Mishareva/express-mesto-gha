@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const express = require('express');
+const helmet = require('helmet');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser'); // for cookie
@@ -19,7 +20,16 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 const { PORT = 3000 } = process.env;
 const app = express();
 
-app.use(cookieParser()); // for cookie
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+      'img-src': ["'self'", 'http:', 'https:', 'data:'],
+    },
+  }),
+);
+
+app.use(cookieParser());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
