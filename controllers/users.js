@@ -1,4 +1,3 @@
-const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
@@ -44,12 +43,6 @@ module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-
-  // if (!validator.isEmail(email)) {
-  //   const err = new Error('не емайл'); // сейчас не работает, надо try ... catch
-  //   err.name = 'ValidationError';
-  //   throw err;
-  // }
 
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
