@@ -14,12 +14,12 @@ module.exports.login = (req, res, next) => {
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new UnauthorizedError('Неправильные почта или пароль');
+        throw new UnauthorizedError('Неправильные почта или пароль.');
       }
       bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw new UnauthorizedError('Неправильные почта или пароль');
+            throw new UnauthorizedError('Неправильные почта или пароль.');
           }
           const token = jwt.sign(
             { _id: user._id },
@@ -48,30 +48,37 @@ module.exports.createUser = (req, res, next) => {
     name, about, avatar, email, password,
   } = req.body;
 
-  bcrypt.hash(password, 10)
-    .then((hash) => User.create({
-      name, about, avatar, email, password: hash,
-    }))
-    .then((user) => {
-      res.status(CREATED).send({
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-        email: user.email,
-        _id: user._id,
-      });
+  User.findOne({ email })
+    .then((userWithSameEmail) => {
+      if (userWithSameEmail) {
+        throw new ConflictError('Такой email уже существует.');
+      }
+      bcrypt.hash(password, 10)
+        .then((hash) => User.create({
+          name, about, avatar, email, password: hash,
+        }))
+        .then((user) => {
+          res.status(CREATED).send({
+            name: user.name,
+            about: user.about,
+            avatar: user.avatar,
+            email: user.email,
+            _id: user._id,
+          });
+        })
+        .catch((err) => {
+          if (err.code === CONFLICT_ERR_CODE) {
+            next(new ConflictError('Такой email уже существует.'));
+            return;
+          }
+          if (err.name === 'ValidationError') {
+            next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
+            return;
+          }
+          next(err);
+        });
     })
-    .catch((err) => {
-      if (err.code === CONFLICT_ERR_CODE) {
-        next(new ConflictError('Такой email уже существует'));
-        return;
-      }
-      if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
-        return;
-      }
-      next(err);
-    });
+    .catch(next);
 };
 
 module.exports.getUsers = (req, res, next) => {
