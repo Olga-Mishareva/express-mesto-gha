@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { CONFLICT_ERR_CODE, CREATED } = require('../utils/constants');
+const { CREATED } = require('../utils/constants');
 
 const UnauthorizedError = require('../errors/UnauthorizedError');
 const BadRequestError = require('../errors/BadRequestError');
@@ -67,10 +67,6 @@ module.exports.createUser = (req, res, next) => {
           });
         })
         .catch((err) => {
-          if (err.code === CONFLICT_ERR_CODE) {
-            next(new ConflictError('Такой email уже существует.'));
-            return;
-          }
           if (err.name === 'ValidationError') {
             next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
             return;
