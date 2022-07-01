@@ -1,8 +1,8 @@
 require('dotenv').config();
 
 const express = require('express');
-const helmet = require('helmet');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser'); // for cookie
 const { celebrate, Joi, errors } = require('celebrate');
