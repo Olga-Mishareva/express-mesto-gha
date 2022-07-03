@@ -53,28 +53,27 @@ module.exports.createUser = (req, res, next) => {
       if (userWithSameEmail) {
         throw new ConflictError('Такой email уже существует.');
       }
-      bcrypt.hash(password, 10)
-        .then((hash) => User.create({
-          name, about, avatar, email, password: hash,
-        }))
-        .then((user) => {
-          res.status(CREATED).send({
-            name: user.name,
-            about: user.about,
-            avatar: user.avatar,
-            email: user.email,
-            _id: user._id,
-          });
-        })
-        .catch((err) => {
-          if (err.name === 'ValidationError') {
-            next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
-            return;
-          }
-          next(err);
-        });
+      return bcrypt.hash(password, 10);
     })
-    .catch(next);
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
+    .then((user) => {
+      res.status(CREATED).send({
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+        _id: user._id,
+      });
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
+        return;
+      }
+      next(err);
+    });
 };
 
 module.exports.getUsers = (req, res, next) => {
